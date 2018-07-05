@@ -1,0 +1,36 @@
+{
+  "name": "rda-service",
+  "version": "1.0.0",
+  "description": "basic service abstraction for rda",
+  "main": "src/Service.mjs",
+  "scripts": {
+    "test": "node --experimental-modules ./node_modules/.bin/section ./test/*.mjs --dev --log-level=0+ --log-module=service"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/infect-org/rda-service.git"
+  },
+  "keywords": [
+    "rda",
+    "service"
+  ],
+  "author": "Michael van der Weg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/infect-org/rda-service/issues"
+  },
+  "homepage": "https://github.com/infect-org/rda-service#readme",
+  "dependencies": {
+    "ee-log": "^3.0.6",
+    "ee-types": "^2.1.4",
+    "envr": "^2.1.2",
+    "express": "^4.16.3",
+    "logd": "^2.0.0",
+    "logd-console-output": "^1.0.7",
+    "logd-console-transport": "^1.0.0"
+  },
+  "devDependencies": {
+    "request": "^2.87.0",
+    "section-tests": "^2.0.2"
+  }
+}
