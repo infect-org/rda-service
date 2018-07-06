@@ -1,5 +1,6 @@
+'use strict';
 
 
 module.exports = {
-    port: 6000
+    port: 6000,
 };

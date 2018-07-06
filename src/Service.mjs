@@ -23,12 +23,36 @@ export default class Service {
         this.controllers = new Map();
 
         this.actionPatterns = new Map([
-            ['list', {url: '/${service}.${resource}', action: 'get'}],
-            ['listOne',  {url: '/${service}.${resource}/:id', action: 'get'}],
-            ['create',  {url: '/${service}.${resource}', action: 'post'}],
-            ['createOrUpdate',  {url: '/${service}.${resource}/:id?', action: 'put'}],
-            ['update',  {url: '/${service}.${resource}', action: 'patch'}],
-            ['delete',  {url: '/${service}.${resource}', action: 'delete'}]
+            ['list', {
+                url: '/${service}.${resource}',
+                action: 'get',
+                defaultStatus: 200,
+            }],
+            ['listOne',  {
+                url: '/${service}.${resource}/:id',
+                action: 'get',
+                defaultStatus: 200,
+            }],
+            ['create',  {
+                url: '/${service}.${resource}',
+                action: 'post',
+                defaultStatus: 201,
+            }],
+            ['createOrUpdate',  {
+                url: '/${service}.${resource}/:id?',
+                action: 'put',
+                defaultStatus: 200,
+            }],
+            ['update',  {
+                url: '/${service}.${resource}/:id',
+                action: 'patch',
+                defaultStatus: 200,
+            }],
+            ['delete',  {
+                url: '/${service}.${resource}/:id',
+                action: 'delete',
+                defaultStatus: 200,
+            }]
         ]);
     }
 
@@ -58,9 +82,6 @@ export default class Service {
     * load the config, initialize all components
     */
     async load() {
-
-        // load config file
-        this.loadConfig();
 
         // load the webserver
         await this.creatServer();
@@ -108,10 +129,30 @@ export default class Service {
 
                     log.debug(`Registering route '${url}' for action '${actionName}' (method ${action.action}) on controller '${controllerName}' for service '${this.name}'' ...`);
 
+
                     // register on app
                     expressApp[action.action](url, (req, res) => {
                         if (type.function(controller[actionName])) {
-                            controller[actionName](req, res);
+
+                            // call the action handler on the controller
+                            controller[actionName](req, res).then((data) => {
+
+                                // check if the response was already sent, if not, 
+                                // send it now with the status defined by the action
+                                // configuration
+                                if (!res.req.res.headersSent) {
+                                    if (typeof data === 'object' && data !== null && typeof data.toJSON === 'function') data = data.toJSON();
+                                    
+                                    res.status(action.defaultStatus).send(data);
+                                }
+                            }).catch((err) => {
+                                log.error(`Encountered an error while processing the '${actionName}' action for the controller '${controllerName}' on the service '${this.name}':`, err);
+
+                                // send the error to the client if the response wasn't sent yet
+                                if (!res.req.res.headersSent) {
+                                    res.status(500).send(err);
+                                }
+                            });
                         } else {
                             res.status(500).send(`Cannot route request: the action ${actionName} does not exist on the controller ${controllerName}!`);
                             throw new Error(`Cannot route request: the action ${actionName} does not exist on the controller ${controllerName}!`);
@@ -179,10 +220,10 @@ export default class Service {
     * load the configuration files from the /config directory
     * and secrets from the /secrets.${env}.js file
     */
-    loadConfig() {
+    loadConfig(rootDir) {
 
         // load the config files for the application
-        this.config = envr.config(path.join(this.dirname(), '../config/'), path.join(this.dirname(), '../'));
+        this.config = envr.config(path.join(rootDir, '/config/'), rootDir);
     }
 
 

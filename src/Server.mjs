@@ -3,6 +3,7 @@
 
 import express from 'express';
 import logd from 'logd';
+import bodyParser from 'body-parser';
 
 
 
@@ -29,6 +30,9 @@ export default class Server {
         });
 
 
+        // accept json bodies
+        this.app.use(bodyParser.json());
+
         // enable cors requests
         this.enableCORS();
 
@@ -36,7 +40,7 @@ export default class Server {
         const portConfig = process.argv.find(item => item.startsWith('--port='));
         this.port = portConfig ? parseInt(portConfig.substr(7), 10) : false;
     }
-    
+
 
 
 
@@ -63,12 +67,12 @@ export default class Server {
     * start the webserver
     */
     listen(port) {
-        port = this.port || port;
+        this.port = this.port || port;
 
         return new Promise((resolve, reject) => {
-            this.server = this.app.listen(port || port, (err) => {
+            this.server = this.app.listen(this.port, (err) => {
                 if (err) reject(err);
-                else resolve(port);
+                else resolve(this.port);
             });
         });
     }
