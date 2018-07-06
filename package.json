@@ -1,6 +1,6 @@
 {
   "name": "rda-service",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "basic service abstraction for rda",
   "main": "index.mjs",
   "scripts": {
