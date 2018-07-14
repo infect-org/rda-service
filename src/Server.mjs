@@ -4,7 +4,7 @@
 import express from 'express';
 import logd from 'logd';
 import bodyParser from 'body-parser';
-import getPort from 'get-port';
+import PortFinder from 'get-available-port';
 
 
 
@@ -41,7 +41,7 @@ export default class Server {
         const portConfig = process.argv.find(item => item.startsWith('--port='));
         this.port = portConfig ? parseInt(portConfig.substr(7), 10) : false;
 
-
+        this.portFinder = new PortFinder();
     }
 
 
@@ -71,7 +71,7 @@ export default class Server {
     * or the port passed to the function or a random free port
     */
     async listen(port) {
-        this.port = this.port || port || await getPort();
+        this.port = this.port || port || await this.portFinder.getPort();
 
         return new Promise((resolve, reject) => {
             this.server = this.app.listen(this.port, (err) => {
