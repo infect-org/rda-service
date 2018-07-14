@@ -6,9 +6,11 @@ import path from 'path';
 import type from 'ee-types';
 import Server from './Server.mjs';
 import logd from 'logd';
+import ApplicationStatusController from './controllers/ApplicationStatus';
 
 
-const log = logd.module('service');
+
+const log = logd.module('rda-service');
 
 
 
@@ -82,6 +84,9 @@ export default class Service {
     * load the config, initialize all components
     */
     async load(port) {
+
+        // register our status controller
+        this.registerController(new ApplicationStatusController());
 
         // load the webserver
         await this.creatServer();
@@ -198,6 +203,17 @@ export default class Service {
         await this.server.close();
     }
 
+
+
+
+
+
+    /**
+    * get the webservers port
+    */
+    getPort() {
+        return this.server.port;
+    }
 
 
 

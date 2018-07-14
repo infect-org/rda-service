@@ -1,10 +1,10 @@
 {
   "name": "rda-service",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "basic service abstraction for rda",
   "main": "index.mjs",
   "scripts": {
-    "test": "node --experimental-modules ./node_modules/.bin/section ./test/*.mjs --dev --log-level=error+ --log-module=service"
+    "test": "node --experimental-modules ./node_modules/.bin/section ./test/*.mjs --dev --log-level=error+ --log-module=*"
   },
   "repository": {
     "type": "git",
@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "request": "^2.87.0",
-    "section-tests": "^2.1.1"
+    "section-tests": "^2.1.1",
+    "superagent": "^3.8.3"
   }
 }
