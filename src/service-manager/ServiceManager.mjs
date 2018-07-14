@@ -2,7 +2,7 @@
 
 import logd from 'logd';
 import path from 'path';
-import fs from 'fs-promise';
+import fs from 'fs';
 import Child from './Child';
 
 
@@ -90,9 +90,20 @@ export default class ServiceManager {
         const sameLevelDir = path.join(process.cwd(), '../', serviceName);
         const modulesDir = path.join(process.cwd(), 'node_modules', serviceName);
 
-        return fs.access(sameLevelDir, fs.constants.F_OK).then(() => sameLevelDir).catch(() => {
-            return fs.access(modulesDir, fs.constants.F_OK).then(() => modulesDir).catch(() => {
+        return this.fileExists(sameLevelDir).catch(() => {
+            return this.fileExists(modulesDir).catch(() => {
                 throw new Error(`Module '${serviceName}' could not be found in folder '${sameLevelDir}' or '${modulesDir}'!`);
+            });
+        });
+    }
+
+
+
+    fileExists(file) {
+        return new Promise((resolve, reject) => {
+            fs.access(file, fs.constants.F_OK, (err) => {
+                if (err) reject(err);
+                else resolve(file);
             });
         });
     }
