@@ -7,6 +7,7 @@ import type from 'ee-types';
 import Server from './Server.mjs';
 import logd from 'logd';
 import ApplicationStatusController from './controllers/ApplicationStatus';
+import {RegistryClient} from 'rda-service-registry';
 
 
 
@@ -58,6 +59,21 @@ export default class Service {
         ]);
     }
 
+
+
+
+    /**
+    * register this service at the service registry
+    */
+    async registerService(registryHost) {
+        this.registryClient = new RegistryClient({
+            registryHost: registryHost || this.config && this.config.registryHost,
+            serviceName: this.name,
+            webserverPort: this.getPort(),
+        });
+
+        await this.registryClient.register();
+    }
 
 
 
@@ -200,6 +216,7 @@ export default class Service {
     * shut down the service
     */
     async end() {
+        if (this.registryClient) await this.registryClient.deregister();
         await this.server.close();
     }
 
