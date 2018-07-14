@@ -81,7 +81,7 @@ export default class Service {
     /**
     * load the config, initialize all components
     */
-    async load() {
+    async load(port) {
 
         // load the webserver
         await this.creatServer();
@@ -90,7 +90,7 @@ export default class Service {
         await this.loadControllers();
 
         // start the webserver
-        await this.server.listen(this.config.port);
+        await this.server.listen(port);
     }
 
 

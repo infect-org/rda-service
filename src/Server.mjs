@@ -4,6 +4,7 @@
 import express from 'express';
 import logd from 'logd';
 import bodyParser from 'body-parser';
+import getPort from 'get-port';
 
 
 
@@ -39,6 +40,8 @@ export default class Server {
         // get port from args
         const portConfig = process.argv.find(item => item.startsWith('--port='));
         this.port = portConfig ? parseInt(portConfig.substr(7), 10) : false;
+
+
     }
 
 
@@ -64,10 +67,11 @@ export default class Server {
 
 
     /**
-    * start the webserver
+    * start the web server, use the port passed by the --port argv
+    * or the port passed to the function or a random free port
     */
-    listen(port) {
-        this.port = this.port || port;
+    async listen(port) {
+        this.port = this.port || port || await getPort();
 
         return new Promise((resolve, reject) => {
             this.server = this.app.listen(this.port, (err) => {

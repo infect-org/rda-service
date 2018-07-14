@@ -34,7 +34,6 @@ section('Service', (section) => {
     section.test('load a controller', async() => {
         const service = new Service('test');
 
-
         section.info('create & register controller');
         const controller = new Controller('user');
 
