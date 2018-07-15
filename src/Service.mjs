@@ -7,7 +7,7 @@ import type from 'ee-types';
 import Server from './Server.mjs';
 import logd from 'logd';
 import ApplicationStatusController from './controllers/ApplicationStatus';
-import {RegistryClient} from 'rda-service-registry';
+import RegistryClient from 'rda-service-registry/src/RegistryClient';
 
 
 
