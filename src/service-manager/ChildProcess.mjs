@@ -10,6 +10,11 @@ class ChildProcess {
 
     constructor() {
         process.on('message', this.request.bind(this));
+
+        // make sure to exit when the parent dies
+        process.on('disconnect', () => {
+            this.stopService();
+        });
     }
 
 
@@ -21,7 +26,6 @@ class ChildProcess {
     async startService(data, response) {
         const modulePath = data.modulePath;
         const ServiceConstructor = (await import(modulePath)).default;
-
 
         this.service = new ServiceConstructor(); 
         await this.service.load();
@@ -39,11 +43,13 @@ class ChildProcess {
     * stop the service
     */
     async stopService(data, response) {
-        await this.service.end();
+        if (this.service) await this.service.end();
         
-        response.send({
-            status: 'ok'
-        });
+        if (response) {
+            response.send({
+                status: 'ok'
+            });
+        }
 
         setImmediate(() => {
             process.exit();

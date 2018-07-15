@@ -26,12 +26,20 @@ export default class Child {
     * start children
     */
     async load() {
+        this.loaded = true;
+
         const promise = new Promise((resolve) => {
             this.resolveReady = resolve;
         });
 
 
         this.child = cp.fork(path.join(this.dirname(), 'ChildProcess.mjs'), this.args);
+
+        // make sure the kid dies with its parent :/
+        process.on('beforeExit', () => {
+            this.child.kill();
+        });
+
 
         this.child.on('exit', () => {
             for (const {reject} of this.messages.values()) reject(new Error(`Child process exited!`));
@@ -49,6 +57,7 @@ export default class Child {
 
 
     async start() {
+        this.started = true;
         return await this.send('startService', {
             modulePath: this.modulePath
         });
@@ -59,7 +68,10 @@ export default class Child {
 
 
     async stop() {
-        return await this.send('stopService');
+        await this.send('stopService');
+
+        // make sure it dies
+        this.child.kill();
     }
 
 

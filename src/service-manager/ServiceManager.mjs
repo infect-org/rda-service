@@ -63,16 +63,15 @@ export default class ServiceManager {
             }));
         }
 
-
         // looks god, create child processes
         for (const service of this.services.values()) {
-            await service.load();
+            if (!service.loaded) await service.load();
         }
 
 
         // looks god, start them
         for (const service of this.services.values()) {
-            await service.start();
+            if (!service.started) await service.start();
         }
     }
 
