@@ -32,7 +32,9 @@ export default class Server {
 
 
         // accept json bodies
-        this.app.use(bodyParser.json());
+        this.app.use(bodyParser.json({
+            limit: '300mb'
+        }));
 
         // enable cors requests
         this.enableCORS();
