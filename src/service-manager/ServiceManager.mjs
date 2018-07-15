@@ -18,7 +18,7 @@ export default class ServiceManager {
         args
     }) {
         this.args = args;
-        this.services = new Map();
+        this.services = new Set();
     }
 
 
@@ -27,24 +27,15 @@ export default class ServiceManager {
     /**
     * stop some services
     */
-    async stopServices(...serviceNames) {
-        if (serviceNames.length) {
+    async stopServices() {
 
-            // stop single services
-            for (const serviceName of serviceNames) {
-                if (this.services.has(serviceName)) {
-                    await this.services.get(serviceName).stop();
-                } else throw new Error(`Cannot stop service '${serviceName}', it was not started before!`);
-            }
-        } else {
-
-            // stop all services, make sure to do this in reverse order
-            const services = [...this.services.values()].reverse();
-            for (const service of services) {
-                await service.stop();
-            }
+        // stop all services, make sure to do this in reverse order
+        const services = [...this.services.values()].reverse();
+        for (const service of services) {
+            await service.stop();
         }
     }
+
 
 
 
@@ -58,9 +49,7 @@ export default class ServiceManager {
         for (const serviceName of serviceNames) {
             const modulePath = await this.getModulePath(serviceName);
 
-            if (this.services.has(serviceName)) throw new Error(`The service '${serviceName}' cannot be loaded, it is running already!`);
-
-            this.services.set(serviceName, new Child({
+            this.services.add(new Child({
                 modulePath,
                 args: this.args,
             }));
