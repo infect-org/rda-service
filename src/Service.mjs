@@ -8,6 +8,7 @@ import Server from './Server.mjs';
 import logd from 'logd';
 import ApplicationStatusController from './controllers/ApplicationStatus';
 import RegistryClient from 'rda-service-registry/src/RegistryClient';
+import rootPath from 'app-root-path';
 
 
 
@@ -57,6 +58,27 @@ export default class Service {
                 defaultStatus: 200,
             }]
         ]);
+
+
+        // load config file
+        this.loadConfig(rootPath.path);
+
+
+        // set up the registry client
+        this.registryClient = new RegistryClient({
+            registryHost: this.config && this.config.registryHost,
+            serviceName: this.getName(),
+        });
+    }
+
+
+
+
+    /**
+    * returns the servicename
+    */
+    getName() {
+        return this.name;
     }
 
 
@@ -65,13 +87,8 @@ export default class Service {
     /**
     * register this service at the service registry
     */
-    async registerService(registryHost) {
-        this.registryClient = new RegistryClient({
-            registryHost: registryHost || this.config && this.config.registryHost,
-            serviceName: this.name,
-            webserverPort: this.getPort(),
-        });
-
+    async registerService() {
+        this.serviceIsRegistered = true;
         await this.registryClient.register();
     }
 
@@ -100,9 +117,12 @@ export default class Service {
     * load the config, initialize all components
     */
     async load(port) {
+        const options = {
+            registryClient: this.registryClient
+        };
 
         // register our status controller
-        this.registerController(new ApplicationStatusController());
+        this.registerController(new ApplicationStatusController(options));
 
         // load the webserver
         await this.creatServer();
@@ -112,6 +132,9 @@ export default class Service {
 
         // start the webserver
         await this.server.listen(port);
+
+        // set th servers port on the registry client
+        this.registryClient.setPort(this.getPort());
     }
 
 
@@ -216,7 +239,7 @@ export default class Service {
     * shut down the service
     */
     async end() {
-        if (this.registryClient) await this.registryClient.deregister();
+        if (this.serviceIsRegistered) await this.registryClient.deregister();
         await this.server.close();
     }
 
@@ -257,17 +280,5 @@ export default class Service {
 
         // load the config files for the application
         this.config = envr.config(path.join(rootDir, '/config/'), rootDir);
-    }
-
-
-
-
-
-
-    /**
-    * returns the current directory for this class
-    */
-    dirname() {
-        return path.dirname(new URL(import.meta.url).pathname);
     }
 }
