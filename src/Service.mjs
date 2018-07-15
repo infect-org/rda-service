@@ -245,6 +245,12 @@ export default class Service {
 
 
 
+    /**
+    * returns the apps root directory
+    */
+    getRootDir() {
+        return rootPath.path;
+    }
 
 
 

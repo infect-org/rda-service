@@ -29,6 +29,7 @@ export default class ServiceManager {
     */
     async stopServices(...serviceNames) {
         if (serviceNames.length) {
+
             // stop single services
             for (const serviceName of serviceNames) {
                 if (this.services.has(serviceName)) {
@@ -36,8 +37,10 @@ export default class ServiceManager {
                 } else throw new Error(`Cannot stop service '${serviceName}', it was not started before!`);
             }
         } else {
-            // stop all services
-            for (const service of this.services.values()) {
+
+            // stop all services, make sure to do this in reverse order
+            const services = [...this.services.values()].reverse();
+            for (const service of services) {
                 await service.stop();
             }
         }
