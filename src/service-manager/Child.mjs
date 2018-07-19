@@ -42,7 +42,7 @@ export default class Child {
 
 
         this.child.on('exit', () => {
-            for (const {reject} of this.messages.values()) reject(new Error(`Child process exited!`));
+            for (const {reject} of this.messages.values()) reject(new Error(`Child process ${this.modulePath} exited!`));
         });
 
         this.child.on('message', (message) => {
