@@ -78,7 +78,10 @@ export default class Server {
         return new Promise((resolve, reject) => {
             this.server = this.app.listen(this.port, (err) => {
                 if (err) reject(err);
-                else resolve(this.port);
+                else {
+                    log.info(`Server is listeningon port ${this.port}`);
+                    resolve(this.port);
+                }
             });
         });
     }
