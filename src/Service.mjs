@@ -60,7 +60,7 @@ export default class Service {
             }]
         ]);
 
-
+        
         // load config file
         this.loadConfig(rootPath.path);
 
