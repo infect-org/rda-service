@@ -1,8 +1,6 @@
-'use strict';
-
 import Service from '../index.mjs';
 import section from 'section-tests';
-import superagent from 'superagent';
+import HTTP2Client from '@distributed-systems/http2-client';
 import log from 'ee-log';
 import assert from 'assert';
 
@@ -12,6 +10,7 @@ section('Service Status', (section) => {
 
     section.test('get service status', async() => {
         const service = new Service('test');
+        const httpClient = new HTTP2Client();
 
         section.info('load service');
         await service.load();
@@ -19,12 +18,15 @@ section('Service Status', (section) => {
         await section.wait(1100);
 
         section.info('get status');
-        const response = await superagent.get(`http://l.dns.porn:${service.getPort()}/test.application-status`).ok(res => res.status === 200).send();
+        const response = await httpClient.get(`http://l.dns.porn:${service.getPort()}/test.application-status`).expect(200).send();
 
-        assert(response.body);
-        assert.equal(response.body.uptime, 1);
+        const data = await response.getData();
+        
+        assert(data);
+        assert.equal(data.uptime, 1);
 
         section.info('end service');
         await service.end(); 
+        await httpClient.end();
     });
 });

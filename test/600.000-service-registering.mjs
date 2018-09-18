@@ -1,10 +1,8 @@
-'use strict';
-
 import ConsoleTransport from 'logd-console-transport';
 import log from 'ee-log';
-import Service, {Controller} from '../index.mjs';
-import section, {SpecReporter} from 'section-tests';
-import ServiceManager from '../src/service-manager/ServiceManager';
+import Service, { Controller } from '../index.mjs';
+import section, { SpecReporter } from 'section-tests';
+import ServiceManager from '@infect/rda-service-manager';
 import assert from 'assert';
 
 
@@ -17,7 +15,6 @@ section('Service Registering', (section) => {
         sm = new ServiceManager({
             args: '--dev --log-level=error+ --log-module=*'.split(' ')
         });
-        
         
         await sm.startServices('rda-service-registry');
     });
@@ -41,6 +38,7 @@ section('Service Registering', (section) => {
         section.info('end service');
         await service.end(); 
     });
+
 
 
 

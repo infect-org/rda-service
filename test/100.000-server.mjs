@@ -1,7 +1,5 @@
-'use strict';
-
 import {Server, Controller} from '../index.mjs';
-import section, {SpecReporter} from 'section-tests';
+import section, { SpecReporter } from 'section-tests';
 
 
 section('Server', (section) => {

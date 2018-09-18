@@ -1,9 +1,7 @@
-'use strict';
-
 import ConsoleTransport from 'logd-console-transport';
 import logd from 'logd';
-import Service, {Controller} from '../index.mjs';
-import section, {SpecReporter} from 'section-tests';
+import Service, { Controller } from '../index.mjs';
+import section, { SpecReporter } from 'section-tests';
 
 
 logd.transport(new ConsoleTransport());

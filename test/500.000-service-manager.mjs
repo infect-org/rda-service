@@ -1,6 +1,4 @@
-'use strict';
-
-import ServiceManager from '../src/service-manager/ServiceManager';
+import ServiceManager from '@infect/rda-service-manager';
 import section from 'section-tests';
 import log from 'ee-log';
 

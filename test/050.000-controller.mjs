@@ -1,7 +1,5 @@
-'use strict';
-
-import {Controller} from '../index.mjs';
-import section, {SpecReporter} from 'section-tests';
+import { Controller } from '../index.mjs';
+import section, { SpecReporter } from 'section-tests';
 
 // set up console reporter
 section.use(new SpecReporter());

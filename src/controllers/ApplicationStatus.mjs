@@ -1,6 +1,3 @@
-'use strict';
-
-
 import Controller from '../Controller';
 import logd from 'logd';
 
@@ -25,7 +22,7 @@ export default class ApplicationStatusController extends Controller {
     /**
     * register a new service
     */
-    async list(request, response) {
+    async list() {
         return {
             status: 'ready',
             uptime: Math.round((Date.now()-this.started.getTime())/1000),

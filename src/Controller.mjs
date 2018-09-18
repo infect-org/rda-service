@@ -1,6 +1,3 @@
-'use strict';
-
-
 export default class Controller {
 
     
@@ -47,6 +44,23 @@ export default class Controller {
     }
 
 
+
+
+    /**
+     * Sets the http client.
+     *
+     * @param      {HTTP2Client}  httpClient  The http client
+     */
+    setHttpClient(httpClient) {
+        this.httpClient = httpClient;
+    }
+
+
+
+
+    getClient() {
+        return this.httpClient;
+    }
 
 
 

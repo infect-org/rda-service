@@ -1,9 +1,5 @@
-'use strict';
-
-
-import express from 'express';
+import HTTP2Server from '@distributed-systems/http2-server';
 import logd from 'logd';
-import bodyParser from 'body-parser';
 import PortFinder from 'get-available-port';
 
 
@@ -17,27 +13,12 @@ export default class Server {
 
 
     constructor() {
-        this.app = express();
-
-        // disable crappy crap. e.g. don't send 
-        // etags, some behaviors are crazy like
-        // caching of cors requests.
-        this.app.set('etag', false);
-        
-        // add english as default language
-        this.app.use((req, res, next) => {
-            req.headers['accept-language'] += ',en; q=.1';
-            next();
+        this.server = new HTTP2Server({
+            secure: false,
         });
 
-
-        // accept json bodies
-        this.app.use(bodyParser.json({
-            limit: '300mb'
-        }));
-
-        // enable cors requests
-        this.enableCORS();
+        // add middlewares
+        this.addMiddlewares();
 
         // get port from args
         const portConfig = process.argv.find(item => item.startsWith('--port='));
@@ -51,17 +32,32 @@ export default class Server {
 
 
     /**
-    * give responses to cors requests
+    * register middlewares on the server
     */
-    enableCORS() {
-        this.app.use(function(req, res, next) {
-            res.header('Access-Control-Allow-Origin', (req.headers.origin || '*'));
-            res.header('Access-Control-Allow-Headers', 'select, filter');
-            res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
-            res.header('Access-Control-Allow-Credentials', 'true');
+    addMiddlewares() {
 
-            if (req.method === 'options') res.status(200).end();
-            else next();
+        // add english as default language
+        this.server.registerMiddleware(async (request) => {
+            if (request.hasHeader('accept-language')) {
+                request.setHeader('accept-language', request.getHeader('accept-language') + ',en; q=.1');
+            } else {
+                request.setHeader('accept-language', 'en; q=.1');
+            }
+        });
+
+        // cors
+        this.server.registerMiddleware(async (request) => {
+            request.response().setHeaders([
+                ['Access-Control-Allow-Origin', (request.getHeader('origin') || '*')],
+                ['Access-Control-Allow-Headers', 'select, filter'],
+                ['Access-Control-Allow-Methods', 'GET, OPTIONS'],
+                ['Access-Control-Allow-Credentials', 'true'],
+            ]);
+
+            if (request.method('options')) {
+                request.response.status(200).send();
+                return false;
+            }
         });
     }
 
@@ -74,16 +70,11 @@ export default class Server {
     */
     async listen(port) {
         this.port = this.port || port || await this.portFinder.getPort();
+        
+        await this.server.listen(this.port);
 
-        return new Promise((resolve, reject) => {
-            this.server = this.app.listen(this.port, (err) => {
-                if (err) reject(err);
-                else {
-                    log.info(`Server is listeningon port ${this.port}`);
-                    resolve(this.port);
-                }
-            });
-        });
+        log.info(`Server is listeningon port ${this.port}`);
+        return this.port;
     }
 
 
@@ -93,17 +84,21 @@ export default class Server {
     /**
     * shut down the server
     */
-    close() {
-        if (this.server) {
-            return new Promise((resolve, reject) => {
-                 this.server.close((err) => {
-                    if (err) reject(err);
-                    else resolve();
-                });
-            });
-        }
+    async close() {
+        await this.server.close();
     }
 
+
+
+
+    /**
+     * return the servers router
+     *
+     * @return     {router}  The router.
+     */
+    getRouter() {
+        return this.server.getRouter();
+    }
 
 
 
@@ -111,7 +106,7 @@ export default class Server {
     /**
     * returns the express app
     */
-    getApp() {
-        return this.app;
+    getServer() {
+        return this.server;
     }
 }

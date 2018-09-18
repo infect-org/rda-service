@@ -1,14 +1,12 @@
-'use strict';
-
-
 import envr from 'envr';
 import path from 'path';
 import type from 'ee-types';
-import Server from './Server.mjs';
-import logd from 'logd';
 import ApplicationStatusController from './controllers/ApplicationStatus';
+import HTTP2Client from '@distributed-systems/http2-client';
+import logd from 'logd';
 import RegistryClient from 'rda-service-registry/src/RegistryClient';
 import rootPath from 'app-root-path';
+import Server from './Server.mjs';
 
 
 
@@ -25,6 +23,9 @@ export default class Service {
 
         this.name = name;
         this.controllers = new Map();
+
+        // shared http client for all controllers
+        this.httpClient = new HTTP2Client();
 
         this.actionPatterns = new Map([
             ['list', {
@@ -133,6 +134,8 @@ export default class Service {
         // start the webserver
         await this.server.listen(port);
 
+        
+
         // set th servers port on the registry client
         this.registryClient.setPort(this.getPort());
     }
@@ -145,13 +148,18 @@ export default class Service {
     * load controllers
     */
     async loadControllers() {
-        const expressApp = this.server.getApp();
+        const router = this.server.getRouter();
 
 
         for (const controller of this.controllers.values()) {
             const controllerName = controller.getName();
 
             log.info(`Loading controller '${controllerName}' for service '${this.name}'' ...`);
+
+
+            // use the same http client on all controllers
+            controller.setHttpClient(this.httpClient);
+
 
             // load the controller
             await controller.load();
@@ -175,30 +183,30 @@ export default class Service {
 
 
                     // register on app
-                    expressApp[action.action](url, (req, res) => {
+                    router[action.action](url, (request) => {
                         if (type.function(controller[actionName])) {
 
                             // call the action handler on the controller
-                            controller[actionName](req, res).then((data) => {
+                            controller[actionName](request).then((data) => {
 
                                 // check if the response was already sent, if not, 
                                 // send it now with the status defined by the action
                                 // configuration
-                                if (!res.req.res.headersSent) {
+                                if (!request.response().isSent()) {
                                     if (typeof data === 'object' && data !== null && typeof data.toJSON === 'function') data = data.toJSON();
                                     
-                                    res.status(action.defaultStatus).send(data);
+                                    request.response().status(action.defaultStatus).send(data);
                                 }
                             }).catch((err) => {
                                 log.error(`Encountered an error while processing the '${actionName}' action for the controller '${controllerName}' on the service '${this.name}':`, err);
 
                                 // send the error to the client if the response wasn't sent yet
-                                if (!res.req.res.headersSent) {
-                                    res.status(500).send(err);
+                                if (!request.response().isSent()) {
+                                    request.response.status(500).send(err.message);
                                 }
                             });
                         } else {
-                            res.status(500).send(`Cannot route request: the action ${actionName} does not exist on the controller ${controllerName}!`);
+                            request.response().status(500).send(`Cannot route request: the action ${actionName} does not exist on the controller ${controllerName}!`);
                             throw new Error(`Cannot route request: the action ${actionName} does not exist on the controller ${controllerName}!`);
                         }
                     });
@@ -271,7 +279,7 @@ export default class Service {
         this.server = new Server();
 
         // get the app
-        this.app = this.server.getApp();
+        this.httpServer = this.server.getServer();
     }
 
 
