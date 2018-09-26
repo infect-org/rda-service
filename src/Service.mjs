@@ -4,7 +4,7 @@ import type from 'ee-types';
 import ApplicationStatusController from './controllers/ApplicationStatus';
 import HTTP2Client from '@distributed-systems/http2-client';
 import logd from 'logd';
-import RegistryClient from 'rda-service-registry/src/RegistryClient';
+import RegistryClient from '@infect/rda-service-registry-client';
 import rootPath from 'app-root-path';
 import Server from './Server.mjs';
 
@@ -66,10 +66,7 @@ export default class Service {
 
 
         // set up the registry client
-        this.registryClient = new RegistryClient({
-            registryHost: this.config && this.config.registryHost,
-            serviceName: this.getName(),
-        });
+        this.registryClient = new RegistryClient(this.config && this.config.registryHost);
     }
 
 
@@ -90,7 +87,10 @@ export default class Service {
     */
     async registerService() {
         this.serviceIsRegistered = true;
-        await this.registryClient.register();
+        await this.registryClient.register({
+            serviceName: this.getName(),
+            port: this.getPort(),
+        });
     }
 
 
