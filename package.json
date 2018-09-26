@@ -1,6 +1,6 @@
 {
   "name": "rda-service",
-  "version": "2.5.3-develop",
+  "version": "2.5.4-develop",
   "description": "basic service abstraction for rda",
   "main": "index.mjs",
   "scripts": {
@@ -21,8 +21,8 @@
   },
   "homepage": "https://github.com/infect-org/rda-service#readme",
   "dependencies": {
-    "@distributed-systems/http2-client": "^1.1.4",
-    "@distributed-systems/http2-server": "^1.5.1",
+    "@distributed-systems/http2-client": "^1.2.2",
+    "@distributed-systems/http2-server": "^1.5.3",
     "@infect/rda-service-manager": "^1.0.2",
     "app-root-path": "^2.1.0",
     "ee-log": "^3.0.7",
@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "request": "^2.88.0",
-    "section-tests": "^2.2.2",
+    "section-tests": "^2.2.3",
     "superagent": "^3.8.3"
   }
 }

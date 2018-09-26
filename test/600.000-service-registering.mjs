@@ -28,10 +28,11 @@ section('Service Registering', (section) => {
         section.info('load service');
         await service.load();
 
-        section.info('load service');
+        section.info('register service');
         await service.registerService('http://l.dns.porn:9000');
 
         // check if it was registered
+        section.info('resolve service');
         const serviceInfo = await service.registryClient.resolve(serviceId);
         assert(serviceInfo);
 
