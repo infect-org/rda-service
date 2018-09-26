@@ -202,7 +202,7 @@ export default class Service {
 
                                 // send the error to the client if the response wasn't sent yet
                                 if (!request.response().isSent()) {
-                                    request.response.status(500).send(err.message);
+                                    request.response().status(500).send(err.message);
                                 }
                             });
                         } else {
