@@ -248,7 +248,12 @@ export default class Service {
     */
     async end() {
         if (this.serviceIsRegistered) await this.registryClient.deregister();
+
         await this.server.close();
+
+        for (const controller of this.controllers.values()) {
+            if (controller.end) await controller.end();
+        }
     }
 
 
