@@ -247,7 +247,10 @@ export default class Service {
     * shut down the service
     */
     async end() {
-        if (this.serviceIsRegistered) await this.registryClient.deregister();
+        if (this.serviceIsRegistered) {
+            await this.registryClient.deregister();
+            await this.registryClient.end();
+        }
 
         await this.server.close();
 

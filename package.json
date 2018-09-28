@@ -1,6 +1,6 @@
 {
   "name": "rda-service",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "basic service abstraction for rda",
   "main": "index.mjs",
   "scripts": {
@@ -24,13 +24,13 @@
     "@distributed-systems/http2-client": "^1.2.2",
     "@distributed-systems/http2-server": "^1.5.3",
     "@infect/rda-service-manager": "^1.0.2",
-    "@infect/rda-service-registry-client": "^2.0.0",
+    "@infect/rda-service-registry-client": "^2.1.0",
     "app-root-path": "^2.1.0",
     "ee-log": "^3.0.7",
     "ee-types": "^2.2.1",
     "envr": "^2.1.4",
     "get-available-port": "^1.0.0",
-    "logd": "^2.2.0",
+    "logd": "^2.2.1",
     "logd-console-output": "^1.2.1",
     "logd-console-transport": "^1.0.0"
   },
