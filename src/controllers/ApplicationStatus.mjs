@@ -1,4 +1,4 @@
-import Controller from '../Controller';
+import Controller from '../Controller.mjs';
 import logd from 'logd';
 
 

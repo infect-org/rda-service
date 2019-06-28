@@ -1,9 +1,9 @@
 'use strict';
 
 
-import Server from './src/Server';
-import Controller from './src/Controller';
-import Service from './src/Service';
+import Server from './src/Server.mjs';
+import Controller from './src/Controller.mjs';
+import Service from './src/Service.mjs';
 
 
 export {
