@@ -1,15 +1,23 @@
-import Service from '../index.mjs';
+import Service from '../index.js';
 import section from 'section-tests';
 import HTTP2Client from '@distributed-systems/http2-client';
 import log from 'ee-log';
 import assert from 'assert';
+import path from 'path';
 
+
+
+const appRoot = path.join(path.dirname(new URL(import.meta.url).pathname), '../');
 
 
 section('Service Status', (section) => {
 
     section.test('get service status', async() => {
-        const service = new Service('test');
+        const service = new Service({
+            name: 'test',
+            appRoot,
+        });
+        
         const httpClient = new HTTP2Client();
 
         section.info('load service');

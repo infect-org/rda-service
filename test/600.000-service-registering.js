@@ -1,12 +1,15 @@
 import ConsoleTransport from 'logd-console-transport';
 import log from 'ee-log';
-import Service, { Controller } from '../index.mjs';
+import Service, { Controller } from '../index.js';
 import section, { SpecReporter } from 'section-tests';
 import ServiceManager from '@infect/rda-service-manager';
 import assert from 'assert';
+import path from 'path';
 
 
 
+
+const appRoot = path.join(path.dirname(new URL(import.meta.url).pathname), '../');
 
 section('Service Registering', (section) => {
     let sm;
@@ -23,7 +26,10 @@ section('Service Registering', (section) => {
 
     section.test('register service at the service registry', async() => {
         const serviceId = 'service-'+Math.round(Math.random()*100000);
-        const service = new Service(serviceId);
+        const service = new Service({
+            name: serviceId,
+            appRoot,
+        });
 
         section.info('load service');
         await service.load();

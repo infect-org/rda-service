@@ -1,4 +1,4 @@
-import { Controller } from '../index.mjs';
+import { Controller } from '../index.js';
 import section, { SpecReporter } from 'section-tests';
 
 // set up console reporter

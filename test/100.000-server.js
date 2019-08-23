@@ -1,4 +1,4 @@
-import {Server, Controller} from '../index.mjs';
+import {Server, Controller} from '../index.js';
 import section, { SpecReporter } from 'section-tests';
 
 

@@ -1,12 +1,11 @@
 import envr from 'envr';
 import path from 'path';
 import type from 'ee-types';
-import ApplicationStatusController from './controllers/ApplicationStatus.mjs';
+import ApplicationStatusController from './controllers/ApplicationStatus.js';
 import HTTP2Client from '@distributed-systems/http2-client';
 import logd from 'logd';
 import RegistryClient from '@infect/rda-service-registry-client';
-import rootPath from 'app-root-path';
-import Server from './Server.mjs';
+import Server from './Server.js';
 
 
 
@@ -17,7 +16,10 @@ const log = logd.module('rda-service');
 export default class Service {
 
 
-    constructor(name) {
+    constructor({
+        name,
+        appRoot,   
+    }) {
         if (!name) throw new Error(`Canont create service: missing parameter 'name'!`);
         log.debug(`Setting up the service '${name}'' ...`);
 
@@ -62,7 +64,7 @@ export default class Service {
 
         
         // load config file
-        this.loadConfig(rootPath.path);
+        this.loadConfig(appRoot);
 
 
         // set up the registry client
