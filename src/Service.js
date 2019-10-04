@@ -1,4 +1,4 @@
-import envr from 'envr';
+import RainbowConfig from '@rainbow-industries/rainbow-config';
 import path from 'path';
 import type from 'ee-types';
 import ApplicationStatusController from './controllers/ApplicationStatus.js';
@@ -23,6 +23,7 @@ export default class Service {
         if (!name) throw new Error(`Canont create service: missing parameter 'name'!`);
         log.debug(`Setting up the service '${name}'' ...`);
 
+        this.appRoot = appRoot;
         this.name = name;
         this.controllers = new Map();
 
@@ -61,14 +62,6 @@ export default class Service {
                 defaultStatus: 200,
             }]
         ]);
-
-        
-        // load config file
-        this.loadConfig(appRoot);
-
-
-        // set up the registry client
-        this.registryClient = new RegistryClient(this.config && this.config.registryHost);
     }
 
 
@@ -120,6 +113,12 @@ export default class Service {
     * load the config, initialize all components
     */
     async load(port) {
+        await this.loadConfig(this.appRoot);
+
+        // set up the registry client
+        this.registryClient = new RegistryClient(this.config.get('service-registry.host'));
+
+
         const options = {
             registryClient: this.registryClient
         };
@@ -300,9 +299,11 @@ export default class Service {
     * load the configuration files from the /config directory
     * and secrets from the /secrets.${env}.js file
     */
-    loadConfig(rootDir) {
+    async loadConfig(rootDir) {
+        const secretsDir = process.env.INIT_CWD || pprocess.env.PWD;
 
-        // load the config files for the application
-        this.config = envr.config(path.join(rootDir, '/config/'), rootDir);
+        this.config = new RainbowConfig(path.join(this.appRoot, './config'), secretsDir);
+
+        await this.config.load();
     }
 }

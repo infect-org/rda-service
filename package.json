@@ -1,8 +1,7 @@
 {
   "name": "@infect/rda-service",
-  "version": "4.0.0",
-  "description": "basic service abstraction for rda",
-  "main": "index.js",
+  "version": "4.0.1",
+  "description": "Microservice Framework for RDA",
   "scripts": {
     "test": "node --experimental-modules --no-warnings ./node_modules/.bin/section ./test/*.js --dev --log-level=error+ --log-module=*"
   },
@@ -24,10 +23,9 @@
     "@distributed-systems/http2-client": "^2.0.1",
     "@distributed-systems/http2-server": "^2.0.0",
     "@infect/rda-service-registry-client": "^2.1.0",
-    "app-root-path": "^2.2.1",
+    "@rainbow-industries/rainbow-config": "^1.0.1",
     "ee-log": "^3.0.9",
     "ee-types": "^3.0.2",
-    "envr": "^2.1.4",
     "get-available-port": "^1.0.0",
     "logd": "^2.3.1",
     "logd-console-output": "^1.3.0",
@@ -36,8 +34,7 @@
   "devDependencies": {
     "@infect/rda-service-manager": "^2.0.2",
     "request": "^2.88.0",
-    "section-tests": "^2.2.4",
-    "superagent": "^3.8.3"
+    "section-tests": "^2.2.4"
   },
   "type": "module"
 }

@@ -1,0 +1,5 @@
+server:
+    port: 7500
+
+service-registry:
+    host: http://l.dns.porn:9000
