@@ -1,6 +1,6 @@
 {
   "name": "@infect/rda-service",
-  "version": "4.0.3",
+  "version": "4.0.4",
   "description": "Microservice Framework for RDA",
   "scripts": {
     "test": "node --experimental-modules --no-warnings ./node_modules/.bin/section ./test/*.js --dev --log-level=error+ --log-module=*"
