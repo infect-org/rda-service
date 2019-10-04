@@ -110,14 +110,26 @@ export default class Service {
 
 
     /**
+     * initializer function to set up the service basics.
+     */
+    async initialize() {
+        if (!this.config){
+            await this.loadConfig(this.appRoot);
+
+            // set up the registry client
+            this.registryClient = new RegistryClient(this.config.get('service-registry.host'));
+        }
+    }
+
+
+
+
+
+    /**
     * load the config, initialize all components
     */
     async load(port) {
-        await this.loadConfig(this.appRoot);
-
-        // set up the registry client
-        this.registryClient = new RegistryClient(this.config.get('service-registry.host'));
-
+        await this.initialize();
 
         const options = {
             registryClient: this.registryClient
