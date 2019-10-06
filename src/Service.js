@@ -312,10 +312,8 @@ export default class Service {
     * and secrets from the /secrets.${env}.js file
     */
     async loadConfig(rootDir) {
-        const secretsDir = process.env.INIT_CWD || process.env.PWD;
-
+        const secretsDir = process.env.INIT_CWD || process.cwd();
         this.config = new RainbowConfig(path.join(this.appRoot, './config'), secretsDir);
-
         await this.config.load();
     }
 }
