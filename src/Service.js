@@ -167,7 +167,7 @@ export default class Service {
         for (const controller of this.controllers.values()) {
             const controllerName = controller.getName();
 
-            log.info(`Loading controller '${controllerName}' for service '${this.name}'' ...`);
+            log.debug(`Loading controller '${controllerName}' for service '${this.name}'' ...`);
 
 
             // use the same http client on all controllers
