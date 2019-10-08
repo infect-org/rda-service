@@ -211,7 +211,7 @@ export default class Service {
                                     request.response().status(action.defaultStatus).send(data);
                                 }
                             }).catch((err) => {
-                                log.error(`Encountered an error while processing the '${actionName}' action for the controller '${controllerName}' on the service '${this.name}':`, err);
+                                log.error(`Encountered an error while processing the '${actionName}' action for the controller '${controllerName}' on the service '${this.name}': ${err.message}`, err);
 
                                 // send the error to the client if the response wasn't sent yet
                                 if (!request.response().isSent()) {
