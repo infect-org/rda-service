@@ -156,7 +156,6 @@ export default class Service {
 
 
 
-
     /**
     * load controllers
     */
@@ -297,7 +296,9 @@ export default class Service {
     * start the webserver
     */
     async creatServer() {
-        this.server = new Server();
+        this.server = new Server({
+            serviceName: this.getName(),
+        });
 
         // get the app
         this.httpServer = this.server.getServer();
@@ -311,7 +312,7 @@ export default class Service {
     * load the configuration files from the /config directory
     * and secrets from the /secrets.${env}.js file
     */
-    async loadConfig(rootDir) {
+    async loadConfig() {
         const secretsDir = process.env.INIT_CWD || process.cwd();
         this.config = new RainbowConfig(path.join(this.appRoot, './config'), secretsDir);
         await this.config.load();

@@ -12,7 +12,11 @@ const log = logd.module('server');
 export default class Server {
 
 
-    constructor() {
+    constructor({
+        serviceName,
+    } = {}) {
+        this.serviceName = serviceName;
+
         this.server = new HTTP2Server({
             secure: false,
         });
@@ -35,6 +39,13 @@ export default class Server {
     * register middlewares on the server
     */
     addMiddlewares() {
+
+        // set the service name on the response
+        if (this.serviceName) {
+            this.server.registerMiddleware(async (request) => {
+                request.response().setHeader('x-rda-service', this.serviceName);
+            });
+        }
 
         // add english as default language
         this.server.registerMiddleware(async (request) => {
@@ -70,7 +81,7 @@ export default class Server {
     */
     async listen(port) {
         this.port = this.port || port || await this.portFinder.getPort();
-        
+
         await this.server.listen(this.port);
 
         log.info(`Server is listening on port ${this.port}`);
