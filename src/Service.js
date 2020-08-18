@@ -315,6 +315,7 @@ export default class Service {
     async loadConfig() {
         const secretsDir = process.env.INIT_CWD || process.cwd();
         this.config = new RainbowConfig(path.join(this.appRoot, './config'), secretsDir);
+        this.config.addEnvironment('beta');
         await this.config.load();
     }
 }

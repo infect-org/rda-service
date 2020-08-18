@@ -13,6 +13,8 @@ const appRoot = path.join(path.dirname(new URL(import.meta.url).pathname), '../'
 section('Service Status', (section) => {
 
     section.test('get service status', async() => {
+        section.setTimeout(2000);
+
         const service = new Service({
             name: 'test',
             appRoot,
