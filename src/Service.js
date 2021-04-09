@@ -207,14 +207,18 @@ export default class Service {
                                 if (!request.response().isSent()) {
                                     if (typeof data === 'object' && data !== null && typeof data.toJSON === 'function') data = data.toJSON();
                                     
-                                    request.response().status(action.defaultStatus).send(data);
+                                    request.response().status(action.defaultStatus).send(data).catch((responseErr) => {
+                                        log.error(`Failed to send data to client: ${responseErr.message}`, err);
+                                    });
                                 }
                             }).catch((err) => {
                                 log.error(`Encountered an error while processing the '${actionName}' action for the controller '${controllerName}' on the service '${this.name}': ${err.message}`, err);
 
                                 // send the error to the client if the response wasn't sent yet
                                 if (!request.response().isSent()) {
-                                    request.response().status(500).send(err.message);
+                                    request.response().status(500).send(err.message).catch((responseErr) => {
+                                        log.error(`Failed to send error ${err.message} to client: ${responseErr.message}`, err);
+                                    });
                                 }
                             });
                         } else {
