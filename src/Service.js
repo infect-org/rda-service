@@ -215,7 +215,7 @@ export default class Service {
                                 }
                             }).catch((err) => {
                                 const sender = request.hasHeader('requesting-service') ? request.getHeader('requesting-service') : 'unknown';
-                                log.error(`Encountered an error while processing the '${actionName}' action for the controller '${controllerName}' on the service '${this.name}': ${err.message}`, err);
+                                log.error(`Encountered an error while processing the '${actionName}' action for the controller '${controllerName}' on the service '${this.name}' triggered by the service '${sender}': ${err.message}`, err);
 
                                 // send the error to the client if the response wasn't sent yet
                                 if (!request.response().isSent()) {
