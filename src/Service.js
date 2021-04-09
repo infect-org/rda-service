@@ -29,6 +29,7 @@ export default class Service {
 
         // shared http client for all controllers
         this.httpClient = new HTTP2Client();
+        this.httpClient.header('requesting-service', name);
 
         this.actionPatterns = new Map([
             ['list', {
@@ -208,16 +209,18 @@ export default class Service {
                                     if (typeof data === 'object' && data !== null && typeof data.toJSON === 'function') data = data.toJSON();
                                     
                                     request.response().status(action.defaultStatus).send(data).catch((responseErr) => {
-                                        log.error(`Failed to send data to the client: ${responseErr.message}`, err);
+                                        const sender = request.hasHeader('requesting-service') ? request.getHeader('requesting-service') : 'unknown';
+                                        log.error(`Failed to send data to the client resulting from the '${actionName}' action on the controller '${controllerName}' triggered by the service '${sender}': ${responseErr.message}`, err);
                                     });
                                 }
                             }).catch((err) => {
+                                const sender = request.hasHeader('requesting-service') ? request.getHeader('requesting-service') : 'unknown';
                                 log.error(`Encountered an error while processing the '${actionName}' action for the controller '${controllerName}' on the service '${this.name}': ${err.message}`, err);
 
                                 // send the error to the client if the response wasn't sent yet
                                 if (!request.response().isSent()) {
                                     request.response().status(500).send(err.message).catch((responseErr) => {
-                                        log.error(`Failed to send the error '${err.message}' to the client: ${responseErr.message}`, err);
+                                        log.error(`Failed to send the error '${err.message}' to the client resulting from the '${actionName}' action on the controller '${controllerName}' triggered by the service '${sender}': ${responseErr.message}`, err);
                                     });
                                 }
                             });
