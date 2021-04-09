@@ -208,7 +208,7 @@ export default class Service {
                                     if (typeof data === 'object' && data !== null && typeof data.toJSON === 'function') data = data.toJSON();
                                     
                                     request.response().status(action.defaultStatus).send(data).catch((responseErr) => {
-                                        log.error(`Failed to send data to client: ${responseErr.message}`, err);
+                                        log.error(`Failed to send data to the client: ${responseErr.message}`, err);
                                     });
                                 }
                             }).catch((err) => {
@@ -217,7 +217,7 @@ export default class Service {
                                 // send the error to the client if the response wasn't sent yet
                                 if (!request.response().isSent()) {
                                     request.response().status(500).send(err.message).catch((responseErr) => {
-                                        log.error(`Failed to send error ${err.message} to client: ${responseErr.message}`, err);
+                                        log.error(`Failed to send the error '${err.message}' to the client: ${responseErr.message}`, err);
                                     });
                                 }
                             });
